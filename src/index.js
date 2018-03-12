@@ -1,12 +1,13 @@
 class SmartCalculator {
   constructor(initialValue) {
-    let self = this;
     this._value = [initialValue];
     this._tempArr = [];
     this._result;
+    this.__proto__.toString = () => this._result;
 
     this._solver =  function() {
-      self._value.reduceRight( (prevValue, item, i, arr) => {
+      this._tempArr = [];
+      this._value.reduceRight( (prevValue, item, i, arr) => {
         switch( item ) {
           case '*': return arr[i - 1] * prevValue;
           break;
@@ -15,56 +16,51 @@ class SmartCalculator {
           case '^': return Math.pow(arr[i - 1], prevValue);
           break;
           case '+': 
-            self._tempArr.push(prevValue);
+            this._tempArr.push(prevValue);
             return arr[i - 1];
           break;
           case '-': 
-            self._tempArr.push(-prevValue);
+            this._tempArr.push(-prevValue);
             return arr[i - 1];
           break;
           default:
-          if ( arr[i - 1] === undefined ) self._tempArr.push(prevValue); 
+          if ( arr[i - 1] === undefined ) this._tempArr.push(prevValue); 
           return prevValue;
         }
       } );
       
-      self._result = self._tempArr.reduce( (prValue, value) => value + prValue );
+      this._result = this._tempArr.reduce( (prValue, value) => value + prValue );
     };
   }
 
   add(number) {
     this._value.push( '+', number );
-    if ( this._flag ) clearTimeout( this._flag );
-    this._flag = setTimeout( this._solver, 0 );
-    return ( this._result )? this._result: this;
+    this._solver();
+    return this;
   }
   
   subtract(number) {
     this._value.push( '-', number );
-    if ( this._flag ) clearTimeout( this._flag );
-    this._flag = setTimeout( this._solver, 0 );
-    return ( this._result )? this._result: this;
+    this._solver();
+    return this;
   }
   
   multiply(number) {
     this._value.push( '*', number );
-    if ( this._flag ) clearTimeout( this._flag );
-    this._flag = setTimeout( this._solver, 0 );
-    return ( this._result )? this._result: this;
+    this._solver();
+    return this;
   }
 
   devide(number) {
     this._value.push( '/', number );
-    if ( this._flag ) clearTimeout( this._flag );
-    this._flag = setTimeout( this._solver, 0 );
-    return ( this._result )? this._result: this;
+    this._solver();
+    return this;
   }
 
   pow(number) {
     this._value.push( '^', number );
-    if ( this._flag ) clearTimeout( this._flag );
-    this._flag = setTimeout( this._solver, 0 );
-    return ( this._result )? this._result: this;
+    this._solver();
+    return this;
   }
 };
 
